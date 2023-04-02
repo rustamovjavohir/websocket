@@ -6,3 +6,4 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     photo = models.ImageField(upload_to='user_photo', verbose_name="Фото", null=True, blank=True)
+    salom = models.CharField(max_length=100, verbose_name="Салом", null=True, blank=True)
