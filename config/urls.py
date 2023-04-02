@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from sesame.views import LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("sesame/login/", LoginView.as_view(), name="sesame-login"),
 ]

@@ -320,4 +320,7 @@ cython_debug/
 
 
 #  local settings
-local_settings.py
+.local_settings.py
+
+# all migrations files
+*/migrations/*.py
