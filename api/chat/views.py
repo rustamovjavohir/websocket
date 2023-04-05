@@ -14,3 +14,11 @@ class ChatView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+
+def index(request):
+    return render(request, "chat/chat2.html")
+
+
+def room(request, room_name):
+    return render(request, "chat/chat2.html", {"room_name": room_name})

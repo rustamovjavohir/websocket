@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'environs',
     'rest_framework',
 
-    # 'channels_redis',
+    'channels_redis',
     # 'djangochannelsrestframework',
 
 ]
