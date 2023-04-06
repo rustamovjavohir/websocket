@@ -2,6 +2,8 @@ import json
 from channels.generic.websocket import WebsocketConsumer, JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
 
+from apps.auth_user.models import CustomUser
+
 
 class ChatConsumer(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
@@ -131,3 +133,24 @@ class ChatJsonWebsocketConsumer(JsonWebsocketConsumer):
             'type': 'chat',
             'message': message
         })
+
+
+class ChatP2PConsumer(WebsocketConsumer):
+    def connect(self):
+        # self.room_group_name = self.scope['url_route']['kwargs']['room_name']
+        if not self.scope['user'].is_anonymous:
+            CustomUser.objects.filter(id=self.scope.get('user').id).update(is_online=True,
+                                                                           channel_name=self.channel_name)
+            self.accept()
+
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+
+        self.send(text_data=json.dumps({
+            'message': message
+        }))
+
+    def disconnect(self, close_code):
+        if not self.scope['user'].is_anonymous:
+            CustomUser.objects.filter(id=self.scope.get('user').id).update(is_online=False, channel_name=None)

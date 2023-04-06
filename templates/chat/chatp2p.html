@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Example</title>
+</head>
+<body>
+    <h1>WebSocket Example</h1>
+    <form>
+        <input type="text" id="messageInput" />
+        <button type="button" onclick="sendMessage()">Send</button>
+    </form>
+    <ul id="messages"></ul>
+
+    <script>
+        var socket = new WebSocket('ws://' + window.location.host + '/ws/p2p/');
+
+        socket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            var messageElement = document.createElement('li');
+            messageElement.textContent = data.message;
+            document.querySelector('#messages').appendChild(messageElement);
+        };
+
+        function sendMessage() {
+            var messageInputDom = document.querySelector('#messageInput');
+            var message = messageInputDom.value;
+            socket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        }
+    </script>
+</body>
+</html>
