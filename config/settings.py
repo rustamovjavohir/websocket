@@ -30,13 +30,12 @@ SECRET_KEY = env.str('SECRET_KEY')
 # DEBUG = True
 DEBUG = env.bool("DEBUG", default=False)
 
-# ALLOWED_HOSTS = []
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 # Application definition
 
-INSTALLED_APPS = [
-    'channels',
+FIRST_APPS = [
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,19 +43,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
 
-    # local
+LOCAL_APPS = [
     'apps.auth_user',
     'apps.chat',
+]
 
-    # libraries
+THIRD_APPS = [
+    'channels',
     'environs',
     'rest_framework',
-
     'channels_redis',
     # 'djangochannelsrestframework',
-
 ]
+
+INSTALLED_APPS = FIRST_APPS + LOCAL_APPS + THIRD_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
