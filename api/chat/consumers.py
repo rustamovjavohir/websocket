@@ -1,6 +1,9 @@
 import json
+
+from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer, JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
+from django.db.models import F
 
 from apps.auth_user.models import CustomUser
 from apps.chat.models import Room, Message
@@ -82,7 +85,11 @@ class ChatConsumer2(ChatConsumer):
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, {"type": "chat_message", "message": message}
+            self.room_group_name,
+            {
+                "type": "chat_message",
+                "message": message
+            }
         )
 
     # Receive message from room group
@@ -166,6 +173,7 @@ class ChatRoomConsumer(WebsocketConsumer):
         self.room = None
         self.user = None
         self.user_inbox = None
+        self.user_object = CustomUser.objects.all()
 
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -190,6 +198,9 @@ class ChatRoomConsumer(WebsocketConsumer):
         }))
 
         if self.user.is_authenticated:
+            # update the user online
+            self.update_user_online(self.user)
+
             # create a user inbox for private messages
             async_to_sync(self.channel_layer.group_add)(
                 self.user_inbox,
@@ -213,6 +224,9 @@ class ChatRoomConsumer(WebsocketConsumer):
         )
 
         if self.user.is_authenticated:
+            # update the user online
+            self.update_user_offline(self.user)
+
             # delete the user inbox for private messages
             async_to_sync(self.channel_layer.group_discard)(
                 self.user_inbox,
@@ -290,3 +304,11 @@ class ChatRoomConsumer(WebsocketConsumer):
 
     def private_message_delivered(self, event):
         self.send(text_data=json.dumps(event))
+
+    # @database_sync_to_async
+    def update_user_online(self, user):
+        self.user_object.filter(pk=user.pk).update(is_online=True)
+
+    # @database_sync_to_async
+    def update_user_offline(self, user):
+        self.user_object.filter(pk=user.pk).update(is_online=False)
