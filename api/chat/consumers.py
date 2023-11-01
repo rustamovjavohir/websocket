@@ -201,7 +201,7 @@ class ChatRoomConsumer(WebsocketConsumer):
             # update the user online
             self.update_user_online(self.user)
 
-            # create a user inbox for private messages
+            # create a user inbox for private message
             async_to_sync(self.channel_layer.group_add)(
                 self.user_inbox,
                 self.channel_name,
@@ -227,7 +227,7 @@ class ChatRoomConsumer(WebsocketConsumer):
             # update the user online
             self.update_user_offline(self.user)
 
-            # delete the user inbox for private messages
+            # delete the user inbox for private message
             async_to_sync(self.channel_layer.group_discard)(
                 self.user_inbox,
                 self.channel_name,

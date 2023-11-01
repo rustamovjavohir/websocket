@@ -8,6 +8,7 @@ class CustomUser(AbstractUser):
     photo = models.ImageField(upload_to='user_photo', verbose_name="Фото", null=True, blank=True)
     channel_name = models.CharField(max_length=100, verbose_name="Название канала", null=True, blank=True)
     is_online = models.BooleanField(default=False, verbose_name="Онлайн")
+    profile_photo = models.ImageField(upload_to='user_photo', verbose_name="Фото профиля", null=True, blank=True)
 
     def __str__(self):
         return self.username

@@ -1,5 +1,7 @@
 from django.db import models
 from apps.auth_user.models import CustomUser
+from utils.choices import GroupTypeChoices
+from utils.models import SlugModel, BaseModel
 
 
 class Room(models.Model):
@@ -31,3 +33,30 @@ class Message(models.Model):
         return f'{self.user.username}: {self.content[:20]} [{self.timestamp.strftime("%d.%m.%Y %H:%M")}]'
 
 
+class Group(SlugModel):
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='groups_owner',
+        verbose_name='Владелец группы')
+    type = models.CharField(
+        max_length=255,
+        choices=GroupTypeChoices.choices,
+        default=GroupTypeChoices.PUBLIC,
+        blank=True,
+        verbose_name='Тип группы')
+    members = models.ManyToManyField(
+        CustomUser,
+        related_name='groups_members',
+        verbose_name='Пользователи',
+        blank=True)
+
+    def generate_group_link(self):
+        return f'/group/{self.slug}'
+
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = 'Группа'
+        verbose_name_plural = 'Группы'

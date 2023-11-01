@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from apps.chat.models import Room, Message
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
@@ -49,8 +50,10 @@ class ChatP2PView(TemplateView):
         return self.render_to_response(context)
 
 
-class RoomListView(TemplateView):
+class RoomListView(LoginRequiredMixin, TemplateView):
     template_name = 'chat/rooms.html'
+    login_url = '/admin/login/'
+    redirect_field_name = 'next'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -64,8 +67,10 @@ class RoomListView(TemplateView):
         return self.render_to_response(context)
 
 
-class RoomDetailView(TemplateView):
+class RoomDetailView(LoginRequiredMixin, TemplateView):
     template_name = 'chat/room-detail.html'
+    login_url = '/admin/login/'
+    redirect_field_name = 'next'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
