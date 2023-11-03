@@ -12,7 +12,7 @@ def error_500(request, *args, **argv):
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
-    template_name = 'index.html'
+    template_name = 'chat1.html'
     login_url = '/auth/'
     redirect_field_name = 'next'
 
