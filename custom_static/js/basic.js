@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             toggle.addEventListener('click', () => {
 // show navbar
                 nav.classList.toggle('show')
+                toggleSlideBarShow(localStorage.getItem("slidebar") || 'hide');
 // change icon
                 toggle.classList.toggle('bx-x')
 // add padding to body
@@ -37,3 +38,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     // Your code to run since DOM is loaded and ready
 });
+
+function toggleSlideBarShow(data) {
+    if (data === "show") {
+        localStorage.setItem("slidebar", "hide");
+        console.log("hide");
+    } else {
+        localStorage.setItem("slidebar", "show");
+        console.log("show");
+    }
+}
