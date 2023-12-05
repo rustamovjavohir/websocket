@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from api.chat.views import ChatView, ChatP2PView, index, room, RoomListView, RoomDetailView
+from api.chat.views import ChatView, ChatP2PView, index, room, RoomListView, RoomDetailView, MessageSendAPIView
 
 urlpatterns = [
     # path('', ChatView.as_view(), name='chat'),
@@ -9,4 +9,5 @@ urlpatterns = [
     # path("index/<str:room_name>/", room, name="room"),
     path('rooms/', RoomListView.as_view(), name='rooms'),
     path('rooms/<str:room_name>/', RoomDetailView.as_view(), name='room-detail'),
+    path('message/', MessageSendAPIView.as_view()),
 ]

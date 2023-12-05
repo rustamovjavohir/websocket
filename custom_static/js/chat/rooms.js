@@ -22,6 +22,9 @@ document.querySelector("#roomSelect").onchange = function () {
     window.location.pathname = "chat/rooms/" + roomName + "/";
 }
 
+
+// slideBarShow();
+
 let slideBar= localStorage.getItem("slidebar") || 'hide';
 
 if (slideBar === "show") {

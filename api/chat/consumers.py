@@ -1,12 +1,14 @@
 import json
 
 from channels.db import database_sync_to_async
-from channels.generic.websocket import WebsocketConsumer, JsonWebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer, JsonWebsocketConsumer, AsyncWebsocketConsumer
 from asgiref.sync import async_to_sync
+from django.contrib.auth.models import AnonymousUser
 from django.db.models import F
 
 from apps.auth_user.models import CustomUser
 from apps.chat.models import Room, Message
+from apps.message.models import TextMessage
 
 
 class ChatConsumer(WebsocketConsumer):
@@ -312,3 +314,32 @@ class ChatRoomConsumer(WebsocketConsumer):
     # @database_sync_to_async
     def update_user_offline(self, user):
         self.user_object.filter(pk=user.pk).update(is_online=False)
+
+
+class ApiChatConsumer(AsyncWebsocketConsumer):
+    groups = ["general"]
+
+    def __init__(self, *args, **kwargs):
+        self.user_id = None
+        super().__init__(args, kwargs)
+
+    async def connect(self):
+        await self.accept()
+        if self.scope["user"] is not AnonymousUser:
+            self.user_id = self.scope["user"].id
+            await self.channel_layer.group_add(f"{self.user_id}-message", self.channel_name)
+
+    async def send_info_to_user_group(self, event):
+        message = event["text"]
+        await self.send(text_data=json.dumps(message))
+
+    async def send_last_message(self, event):
+        last_msg = await self.get_last_message(self.user_id)
+        last_msg = eval(last_msg)
+        last_msg["status"] = event["text"]
+        await self.send(text_data=json.dumps(last_msg))
+
+    @database_sync_to_async
+    def get_last_message(self, user_id):
+        message = TextMessage.objects.filter(owner_id=user_id).last()
+        return message.context
